@@ -43,6 +43,7 @@ object FrmSplashText: TFrmSplashText
     AutoSize = False
     Color = clGray
     ParentColor = False
+    PopupMenu = pm
     OnMouseDown = lblMoveMouseDown
   end
   object lblClose: TLabel
@@ -63,16 +64,24 @@ object FrmSplashText: TFrmSplashText
     OnClick = lblCloseClick
   end
   object tmr: TTimer
-    Interval = 60000
+    OnTimer = tmrTimer
     Left = 152
     Top = 40
   end
   object pm: TPopupMenu
     Left = 200
     Top = 40
+    object miAdd: TMenuItem
+      Caption = 'Add...'
+      OnClick = miAddClick
+    end
     object miOpenConfig: TMenuItem
-      Caption = 'Open config...'
+      Caption = 'Config'
       OnClick = miOpenConfigClick
+    end
+    object miQuit: TMenuItem
+      Caption = 'Quit'
+      OnClick = miQuitClick
     end
   end
 end

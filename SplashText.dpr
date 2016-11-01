@@ -8,6 +8,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.ShowMainForm := False;
   Application.CreateForm(TFrmSplashText, FrmSplashText);
   Application.Run;
 end.
