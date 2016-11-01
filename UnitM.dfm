@@ -1,10 +1,10 @@
 object FrmSplashText: TFrmSplashText
-  Left = 854
-  Top = 117
+  Left = 1007
+  Top = 359
   BorderStyle = bsNone
   Caption = 'SplashText'
-  ClientHeight = 512
-  ClientWidth = 695
+  ClientHeight = 280
+  ClientWidth = 397
   Color = clPurple
   TransparentColor = True
   TransparentColorValue = clPurple
@@ -24,8 +24,8 @@ object FrmSplashText: TFrmSplashText
     Left = 8
     Top = 24
     Width = 56
-    Height = 80
-    Caption = 'EXAMPLE'#13#10'EXAMPLE'#13#10'EXAMPLE'#13#10'EXAMPLE'#13#10
+    Height = 32
+    Caption = 'MASTER'#13#10'PROCESS'
     Color = clPurple
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWhite
