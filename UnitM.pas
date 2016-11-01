@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, IniFiles, Menus, ShellApi;
+  Dialogs, StdCtrls, ExtCtrls, IniFiles, Menus, ShellApi, UnitText, Math;
 
 const
   WM_ICONTRAY = WM_USER + 1;
@@ -93,7 +93,7 @@ var
   Text: String;
 begin
   Text := ini.ReadString('Data' + IntToStr(i), 'text' , '-');
-  lbl.Caption := StringReplace(Text, '\n', #13, [rfReplaceAll]);
+  lbl.Caption := StringReplace(Text, '\n', #13#10, [rfReplaceAll]);
 
   Left := ini.ReadInteger('Data' + IntToStr(i), 'x', 500);
   Top := ini.ReadInteger('Data' + IntToStr(i), 'y', 500);
@@ -112,7 +112,7 @@ end;
 
 procedure TFrmSplashText.ResizeForm();
 begin
-  lblMove.Width := lbl.Width;
+  lblMove.Width := Max(lbl.Width, 100);
   FrmSplashText.Width := lblMove.Width + lblMove.Left * 2;
   FrmSplashText.Height := lbl.Height + lbl.Top + lblMove.Left;
 end;
@@ -272,9 +272,10 @@ var
   text: String;
   count: Integer;
 begin
-  text := InputBox('SplashText', 'Text', '');
+  FrmText.ShowModal('');
+  if not FrmText.Save then Exit;
 
-  if text = '' then Exit;
+  text := StringReplace(FrmText.mmo.Text, #13#10, '\n', [rfReplaceAll]);
 
   ini := TIniFile.Create(config);
   try
@@ -292,18 +293,17 @@ procedure TFrmSplashText.miSetTextClick(Sender: TObject);
 var
   text: string;
 begin
-  text := StringReplace(lbl.Caption, #13, '\n', [rfReplaceAll]);
-  text := InputBox('SplashText', 'Text', text);
+  FrmText.ShowModal(lbl.Caption);
+  if not FrmText.Save then Exit;
 
-  if text = '' then Exit;
-
-  lbl.Caption := StringReplace(text, '\n', #13, [rfReplaceAll]);
+  lbl.Caption := FrmText.mmo.Text;
   Application.ProcessMessages;
 
   ResizeForm;
 
   ini := TIniFile.Create(config);
   try
+    text := StringReplace(FrmText.mmo.Text, #13#10, '\n', [rfReplaceAll]);
     ini.WriteString('Data' + IntToStr(number), 'text', text);
   finally
     ini.Free;
