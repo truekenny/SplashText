@@ -16,6 +16,8 @@ type
     miOpenConfig: TMenuItem;
     miQuit: TMenuItem;
     miAdd: TMenuItem;
+    miShowAll: TMenuItem;
+    miSetText: TMenuItem;
     procedure CreateParams(var Params: TCreateParams); override;
 
     procedure FormCreate(Sender: TObject);
@@ -28,6 +30,8 @@ type
     procedure tmrTimer(Sender: TObject);
 
     procedure miAddClick(Sender: TObject);
+    procedure miSetTextClick(Sender: TObject);
+    procedure miShowAllClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
   private
@@ -185,6 +189,49 @@ begin
   end;
 
   ShellExecute(Handle, 'open', PChar(ParamStr(0)), PChar(IntToStr(count)), nil, SW_SHOWNORMAL);
+end;
+
+procedure TFrmSplashText.miSetTextClick(Sender: TObject);
+var
+  text: string;
+begin
+  text := StringReplace(lbl.Caption, #13, '\n', [rfReplaceAll]);
+  text := InputBox('SplashText', 'Text', text);
+
+  if text = '' then Exit;
+
+  lbl.Caption := StringReplace(text, '\n', #13, [rfReplaceAll]);
+  Application.ProcessMessages;
+  lblMove.Width := lbl.Width;
+
+  ini := TIniFile.Create(config);
+  try
+    ini.WriteString('Data' + IntToStr(number), 'text', text);
+  finally
+    ini.Free;
+  end;
+end;
+
+procedure TFrmSplashText.miShowAllClick(Sender: TObject);
+var
+  i, count: Integer;
+begin
+  ini := TIniFile.Create(config);
+  try
+    count := ini.ReadInteger('Options', 'count', 0);
+
+    for i:= 0 to count - 1 do begin
+      if not ini.ReadBool('Data' + IntToStr(i), 'enable' , True) then begin
+        ini.WriteBool('Data' + IntToStr(i), 'enable' , True);
+        ini.UpdateFile;
+        
+        ShellExecute(Handle, 'open', PChar(ParamStr(0)), PChar(IntToStr(i)), nil, SW_SHOWNORMAL);
+      end;
+
+    end;
+  finally
+    ini.Free;
+  end;
 end;
 
 procedure TFrmSplashText.miOpenConfigClick(Sender: TObject);

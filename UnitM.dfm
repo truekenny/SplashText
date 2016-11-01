@@ -75,6 +75,14 @@ object FrmSplashText: TFrmSplashText
       Caption = 'Add...'
       OnClick = miAddClick
     end
+    object miSetText: TMenuItem
+      Caption = 'Set Text'
+      OnClick = miSetTextClick
+    end
+    object miShowAll: TMenuItem
+      Caption = 'Show All'
+      OnClick = miShowAllClick
+    end
     object miOpenConfig: TMenuItem
       Caption = 'Config'
       OnClick = miOpenConfigClick
