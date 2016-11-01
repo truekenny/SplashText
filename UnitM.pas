@@ -52,6 +52,7 @@ type
     procedure Init(ini: TIniFile; i: Integer);
     function TColorToHex(Color : TColor) : string;
     function HexToTColor(sColor : string) : TColor;
+    procedure ResizeForm();
   end;
 
 var
@@ -92,16 +93,20 @@ begin
 
   Application.ProcessMessages;
 
-  lblMove.Width := lbl.Width;
-  FrmSplashText.Width := lblMove.Width + lblMove.Left * 2;
-  FrmSplashText.Height := lbl.Height + lbl.Top * 2;
-
+  ResizeForm;
 
   if ini.ReadBool('Data' + IntToStr(i), 'enable' , True) then begin
     Show();
   end else begin
     mustHalt := True;
   end;
+end;
+
+procedure TFrmSplashText.ResizeForm();
+begin
+  lblMove.Width := lbl.Width;
+  FrmSplashText.Width := lblMove.Width + lblMove.Left * 2;
+  FrmSplashText.Height := lbl.Height + lbl.Top * 2;
 end;
 
 procedure TFrmSplashText.CreateParams(var Params: TCreateParams);
@@ -222,9 +227,7 @@ begin
   lbl.Caption := StringReplace(text, '\n', #13, [rfReplaceAll]);
   Application.ProcessMessages;
 
-  lblMove.Width := lbl.Width;
-  FrmSplashText.Width := lblMove.Width + lblMove.Left * 2;
-  FrmSplashText.Height := lbl.Height + lbl.Top * 2;
+  ResizeForm;
 
   ini := TIniFile.Create(config);
   try
