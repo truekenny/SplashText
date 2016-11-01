@@ -111,7 +111,7 @@ procedure TFrmSplashText.ResizeForm();
 begin
   lblMove.Width := lbl.Width;
   FrmSplashText.Width := lblMove.Width + lblMove.Left * 2;
-  FrmSplashText.Height := lbl.Height + lbl.Top * 2;
+  FrmSplashText.Height := lbl.Height + lbl.Top + lblMove.Left;
 end;
 
 procedure TFrmSplashText.CreateParams(var Params: TCreateParams);
