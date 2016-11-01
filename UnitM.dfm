@@ -75,9 +75,19 @@ object FrmSplashText: TFrmSplashText
       Caption = 'Add...'
       OnClick = miAddClick
     end
+    object miSeparator1: TMenuItem
+      Caption = '-'
+    end
     object miSetText: TMenuItem
       Caption = 'Set Text'
       OnClick = miSetTextClick
+    end
+    object miSetColor: TMenuItem
+      Caption = 'Set Color'
+      OnClick = miSetColorClick
+    end
+    object miSeparator2: TMenuItem
+      Caption = '-'
     end
     object miShowAll: TMenuItem
       Caption = 'Show All'
@@ -87,9 +97,16 @@ object FrmSplashText: TFrmSplashText
       Caption = 'Config'
       OnClick = miOpenConfigClick
     end
+    object miSeparator3: TMenuItem
+      Caption = '-'
+    end
     object miQuit: TMenuItem
       Caption = 'Quit'
       OnClick = miQuitClick
     end
+  end
+  object dlgColor: TColorDialog
+    Left = 256
+    Top = 40
   end
 end

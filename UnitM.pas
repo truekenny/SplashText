@@ -18,6 +18,12 @@ type
     miAdd: TMenuItem;
     miShowAll: TMenuItem;
     miSetText: TMenuItem;
+    miSetColor: TMenuItem;
+    miSeparator1: TMenuItem;
+    miSeparator2: TMenuItem;
+    miSeparator3: TMenuItem;
+    dlgColor: TColorDialog;
+
     procedure CreateParams(var Params: TCreateParams); override;
 
     procedure FormCreate(Sender: TObject);
@@ -31,6 +37,7 @@ type
 
     procedure miAddClick(Sender: TObject);
     procedure miSetTextClick(Sender: TObject);
+    procedure miSetColorClick(Sender: TObject);
     procedure miShowAllClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
@@ -43,6 +50,7 @@ type
   public
     { Public declarations }
     procedure Init(ini: TIniFile; i: Integer);
+    function TColorToHex(Color : TColor) : string;
     function HexToTColor(sColor : string) : TColor;
   end;
 
@@ -52,6 +60,14 @@ var
 implementation
 
 {$R *.dfm}
+
+function TFrmSplashText.TColorToHex(Color : TColor) : string;
+begin
+  Result :=
+    IntToHex(GetRValue(Color), 2) +
+    IntToHex(GetGValue(Color), 2) +
+    IntToHex(GetBValue(Color), 2) ;
+end;
 
 function TFrmSplashText.HexToTColor(sColor : string) : TColor;
  begin
@@ -77,6 +93,9 @@ begin
   Application.ProcessMessages;
 
   lblMove.Width := lbl.Width;
+  FrmSplashText.Width := lblMove.Width + lblMove.Left * 2;
+  FrmSplashText.Height := lbl.Height + lbl.Top * 2;
+
 
   if ini.ReadBool('Data' + IntToStr(i), 'enable' , True) then begin
     Show();
@@ -202,11 +221,32 @@ begin
 
   lbl.Caption := StringReplace(text, '\n', #13, [rfReplaceAll]);
   Application.ProcessMessages;
+
   lblMove.Width := lbl.Width;
+  FrmSplashText.Width := lblMove.Width + lblMove.Left * 2;
+  FrmSplashText.Height := lbl.Height + lbl.Top * 2;
 
   ini := TIniFile.Create(config);
   try
     ini.WriteString('Data' + IntToStr(number), 'text', text);
+  finally
+    ini.Free;
+  end;
+end;
+
+procedure TFrmSplashText.miSetColorClick(Sender: TObject);
+var
+  color: string;
+begin
+  if not dlgColor.Execute then Exit;
+
+  lbl.Font.Color := dlgColor.Color;
+
+  color := TColorToHex(dlgColor.Color);
+
+  ini := TIniFile.Create(config);
+  try
+    ini.WriteString('Data' + IntToStr(number), 'color', color);
   finally
     ini.Free;
   end;
