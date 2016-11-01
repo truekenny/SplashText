@@ -130,6 +130,8 @@ begin
     end;
     WM_RBUTTONDOWN:
     begin
+      BringToFront();
+      Application.ProcessMessages;
       pm.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
     end;
   end;
