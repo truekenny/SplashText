@@ -6,6 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, IniFiles, Menus, ShellApi;
 
+const
+  WM_ICONTRAY = WM_USER + 1;
 type
   TFrmSplashText = class(TForm)
     lbl: TLabel;
@@ -47,12 +49,15 @@ type
     number: Integer;
     config: String;
     mustHalt: Boolean;
+
+    TrayIconData: TNotifyIconData;
   public
     { Public declarations }
     procedure Init(ini: TIniFile; i: Integer);
     function TColorToHex(Color : TColor) : string;
     function HexToTColor(sColor : string) : TColor;
     procedure ResizeForm();
+    procedure TrayMessage(var Msg: TMessage); message WM_ICONTRAY;
   end;
 
 var
@@ -116,6 +121,20 @@ begin
   Params.WndParent := Application.Handle;
 end;
 
+procedure TFrmSplashText.TrayMessage(var Msg: TMessage);
+begin
+  case Msg.lParam of
+    WM_LBUTTONDOWN:
+    begin
+      //
+    end;
+    WM_RBUTTONDOWN:
+    begin
+      pm.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+    end;
+  end;
+end;
+
 procedure TFrmSplashText.FormCreate(Sender: TObject);
 var
   i, count: Integer;
@@ -143,6 +162,25 @@ begin
   finally
     ini.Free;
   end;
+
+  if number = -1 then begin
+    with TrayIconData do
+      begin
+        cbSize := SizeOf(TrayIconData);
+        Wnd := Handle;
+        uID := 0;
+        uFlags := NIF_MESSAGE + NIF_ICON + NIF_TIP;
+        uCallbackMessage := WM_ICONTRAY;
+        hIcon := Application.Icon.Handle;
+        StrPCopy(szTip, Application.Title);
+      end;
+
+    Shell_NotifyIcon(NIM_ADD, @TrayIconData);
+
+    miSetText.Visible := False;
+    miSetColor.Visible := False;
+    miSeparator1.Visible := False;
+  end;
 end;
 
 procedure TFrmSplashText.FormActivate(Sender: TObject);
@@ -152,7 +190,10 @@ end;
 
 procedure TFrmSplashText.FormDestroy(Sender: TObject);
 begin
-  if number = -1 then Exit;
+  if number = -1 then begin
+    Shell_NotifyIcon(NIM_DELETE, @TrayIconData);
+    Exit;
+  end;
 
   ini := TIniFile.Create(config);
   try
