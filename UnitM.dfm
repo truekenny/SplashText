@@ -93,6 +93,10 @@ object FrmSplashText: TFrmSplashText
       Caption = 'Show All'
       OnClick = miShowAllClick
     end
+    object miTransparentClick: TMenuItem
+      Caption = 'Transparent Click'
+      OnClick = miTransparentClickClick
+    end
     object miOpenConfig: TMenuItem
       Caption = 'Config'
       OnClick = miOpenConfigClick

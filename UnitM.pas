@@ -25,6 +25,7 @@ type
     miSeparator2: TMenuItem;
     miSeparator3: TMenuItem;
     dlgColor: TColorDialog;
+    miTransparentClick: TMenuItem;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -41,6 +42,7 @@ type
     procedure miSetTextClick(Sender: TObject);
     procedure miSetColorClick(Sender: TObject);
     procedure miShowAllClick(Sender: TObject);
+    procedure miTransparentClickClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
   private
@@ -58,6 +60,7 @@ type
     function HexToTColor(sColor : string) : TColor;
     procedure ResizeForm();
     procedure TrayMessage(var Msg: TMessage); message WM_ICONTRAY;
+    procedure TransparentStyle(var Msg: TMessage); message WM_APP;
   end;
 
 var
@@ -136,9 +139,36 @@ begin
   end;
 end;
 
+procedure TFrmSplashText.TransparentStyle(var Msg: TMessage);
+var
+  transparent: Boolean;
+  ExStyle: LongInt;
+begin
+  transparent := Msg.WParam = 1;
+
+  if transparent then begin
+    ExStyle := GetWindowLong(Handle, GWL_EXSTYLE);
+    ExStyle := ExStyle or WS_EX_LAYERED or WS_EX_TRANSPARENT;
+
+    SetWindowLong(Handle, GWL_EXSTYLE, ExStyle);
+  end else begin
+    ExStyle := GetWindowLong(Handle, GWL_EXSTYLE);
+    ExStyle := ExStyle and (not WS_EX_LAYERED) and (not WS_EX_TRANSPARENT);
+
+    SetWindowLong(Handle, GWL_EXSTYLE, ExStyle);
+    TransparentColor := False;
+    TransparentColor := True;
+  end;
+
+  lblMove.Visible := not transparent;
+  lblClose.Visible := not transparent;
+  miTransparentClick.Checked := transparent;
+end;
+
 procedure TFrmSplashText.FormCreate(Sender: TObject);
 var
   i, count: Integer;
+  msg: TMessage;
 begin
   number := -1;
   mustHalt := False;
@@ -151,6 +181,11 @@ begin
 
   ini := TIniFile.Create(config);
   try
+    if(ini.ReadBool('Options', 'transparent', False)) then begin
+      msg.wParam := Ord(ini.ReadBool('Options', 'transparent', False));
+      TransparentStyle(msg);
+    end;
+
     if number = -1 then begin
       count := ini.ReadInteger('Options', 'count', 0);
 
@@ -312,6 +347,35 @@ begin
     end;
   finally
     ini.Free;
+  end;
+end;
+
+procedure TFrmSplashText.miTransparentClickClick(Sender: TObject);
+var
+  NextHandle: HWND;
+  NextClass: array[0..260] of Char;
+  transparent: Integer;
+begin
+  transparent := Ord(not miTransparentClick.Checked);
+
+  ini := TIniFile.Create(config);
+  try
+    ini.WriteBool('Options', 'transparent', transparent = 1);
+  finally
+    ini.Free;
+  end;
+
+
+  NextHandle := GetWindow(Application.Handle, GW_HWNDFIRST);
+  while NextHandle > 0 do
+  begin
+    GetClassName(NextHandle, NextClass, 255);
+
+    if String(NextClass) = FrmSplashText.ClassName then begin
+      SendMessage(NextHandle, WM_APP, transparent, 0);
+    end;
+
+    NextHandle := GetWindow(NextHandle, GW_HWNDNEXT);
   end;
 end;
 
