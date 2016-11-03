@@ -1,9 +1,9 @@
 object FrmText: TFrmText
   Left = 967
   Top = 289
-  Width = 561
-  Height = 313
   Caption = 'SplashText'
+  ClientHeight = 274
+  ClientWidth = 545
   Color = clBtnFace
   Constraints.MinHeight = 200
   Constraints.MinWidth = 500
@@ -25,8 +25,14 @@ object FrmText: TFrmText
     Width = 529
     Height = 202
     Anchors = [akLeft, akTop, akRight, akBottom]
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Fixedsys'
+    Font.Style = []
     Lines.Strings = (
       'mmo')
+    ParentFont = False
     TabOrder = 0
   end
   object btnOk: TButton
