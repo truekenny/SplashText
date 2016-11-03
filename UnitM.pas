@@ -204,7 +204,7 @@ begin
   if number = -1 then begin
     with TrayIconData do
       begin
-        cbSize := SizeOf(TrayIconData);
+        cbSize :=  TNotifyIconData.SizeOf; // SizeOf(TrayIconData);
         Wnd := Handle;
         uID := 0;
         uFlags := NIF_MESSAGE + NIF_ICON + NIF_TIP;

@@ -44,6 +44,7 @@ object FrmSplashText: TFrmSplashText
     Color = clGray
     ParentColor = False
     PopupMenu = pm
+    Transparent = False
     OnMouseDown = lblMoveMouseDown
   end
   object lblClose: TLabel
