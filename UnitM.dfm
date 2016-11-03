@@ -79,13 +79,13 @@ object FrmSplashText: TFrmSplashText
     object miSeparator1: TMenuItem
       Caption = '-'
     end
-    object miSetText: TMenuItem
-      Caption = 'Set Text'
-      OnClick = miSetTextClick
+    object miEditText: TMenuItem
+      Caption = 'Edit Text...'
+      OnClick = miEditTextClick
     end
-    object miSetColor: TMenuItem
-      Caption = 'Set Color'
-      OnClick = miSetColorClick
+    object miChangeColor: TMenuItem
+      Caption = 'Change Color...'
+      OnClick = miChangeColorClick
     end
     object miSeparator2: TMenuItem
       Caption = '-'

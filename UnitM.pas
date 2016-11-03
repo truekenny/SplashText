@@ -19,8 +19,8 @@ type
     miQuit: TMenuItem;
     miAdd: TMenuItem;
     miShowAll: TMenuItem;
-    miSetText: TMenuItem;
-    miSetColor: TMenuItem;
+    miEditText: TMenuItem;
+    miChangeColor: TMenuItem;
     miSeparator1: TMenuItem;
     miSeparator2: TMenuItem;
     miSeparator3: TMenuItem;
@@ -39,8 +39,8 @@ type
     procedure tmrTimer(Sender: TObject);
 
     procedure miAddClick(Sender: TObject);
-    procedure miSetTextClick(Sender: TObject);
-    procedure miSetColorClick(Sender: TObject);
+    procedure miEditTextClick(Sender: TObject);
+    procedure miChangeColorClick(Sender: TObject);
     procedure miShowAllClick(Sender: TObject);
     procedure miTransparentClickClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
@@ -215,8 +215,8 @@ begin
 
     Shell_NotifyIcon(NIM_ADD, @TrayIconData);
 
-    miSetText.Visible := False;
-    miSetColor.Visible := False;
+    miEditText.Visible := False;
+    miChangeColor.Visible := False;
     miSeparator1.Visible := False;
   end;
 end;
@@ -291,7 +291,7 @@ begin
   ShellExecute(Handle, 'open', PChar(ParamStr(0)), PChar(IntToStr(count)), nil, SW_SHOWNORMAL);
 end;
 
-procedure TFrmSplashText.miSetTextClick(Sender: TObject);
+procedure TFrmSplashText.miEditTextClick(Sender: TObject);
 var
   text: string;
 begin
@@ -312,7 +312,7 @@ begin
   end;
 end;
 
-procedure TFrmSplashText.miSetColorClick(Sender: TObject);
+procedure TFrmSplashText.miChangeColorClick(Sender: TObject);
 var
   color: string;
 begin
