@@ -190,7 +190,9 @@ begin
       count := ini.ReadInteger('Options', 'count', 0);
 
       for i:= 0 to count - 1 do begin
-        ShellExecute(Handle, 'open', PChar(ParamStr(0)), PChar(IntToStr(i)), nil, SW_SHOWNORMAL);
+        if ini.ReadBool('Data' + IntToStr(i), 'enable' , True) then begin
+          ShellExecute(Handle, 'open', PChar(ParamStr(0)), PChar(IntToStr(i)), nil, SW_SHOWNORMAL);
+        end;
       end;
     end else begin
       Init(ini, number);
