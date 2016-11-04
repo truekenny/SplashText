@@ -6,3 +6,5 @@ config.ini
 UnitText.dcu
 __history/
 SplashText.stat
+__recovery/
+SplashText.identcache

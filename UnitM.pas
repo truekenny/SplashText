@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, IniFiles, Menus, ShellApi, UnitText, Math;
+  Dialogs, StdCtrls, ExtCtrls, IniFiles, Menus, ShellApi, UnitText, Math,
+  System.ImageList, Vcl.ImgList;
 
 const
   WM_ICONTRAY = WM_USER + 1;
@@ -25,7 +26,8 @@ type
     miSeparator2: TMenuItem;
     miSeparator3: TMenuItem;
     dlgColor: TColorDialog;
-    miTransparentClick: TMenuItem;
+    miClickThrough: TMenuItem;
+    il: TImageList;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -42,7 +44,7 @@ type
     procedure miEditTextClick(Sender: TObject);
     procedure miChangeColorClick(Sender: TObject);
     procedure miShowAllClick(Sender: TObject);
-    procedure miTransparentClickClick(Sender: TObject);
+    procedure miClickThroughClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
   private
@@ -163,7 +165,7 @@ begin
 
   lblMove.Visible := not transparent;
   lblClose.Visible := not transparent;
-  miTransparentClick.Checked := transparent;
+  miClickThrough.Checked := transparent;
 end;
 
 procedure TFrmSplashText.FormCreate(Sender: TObject);
@@ -354,13 +356,13 @@ begin
   end;
 end;
 
-procedure TFrmSplashText.miTransparentClickClick(Sender: TObject);
+procedure TFrmSplashText.miClickThroughClick(Sender: TObject);
 var
   NextHandle: HWND;
   NextClass: array[0..260] of Char;
   transparent: Integer;
 begin
-  transparent := Ord(not miTransparentClick.Checked);
+  transparent := Ord(not miClickThrough.Checked);
 
   ini := TIniFile.Create(config);
   try
