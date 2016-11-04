@@ -98,6 +98,7 @@ begin
   Left := ini.ReadInteger('Data' + IntToStr(i), 'x', 500);
   Top := ini.ReadInteger('Data' + IntToStr(i), 'y', 500);
   lbl.Font.Color := HexToTColor(ini.ReadString('Data' + IntToStr(i), 'color' , 'FFFFFF'));
+  lblMove.Color := lbl.Font.Color;
 
   Application.ProcessMessages;
 
@@ -319,6 +320,7 @@ begin
   if not dlgColor.Execute then Exit;
 
   lbl.Font.Color := dlgColor.Color;
+  lblMove.Color := lbl.Font.Color;
 
   color := TColorToHex(dlgColor.Color);
 
