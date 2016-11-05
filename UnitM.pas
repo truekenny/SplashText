@@ -32,6 +32,7 @@ type
     lblShadow2: TLabel;
     lblShadow3: TLabel;
     lblShadow4: TLabel;
+    miChangeFontSize: TMenuItem;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -51,6 +52,7 @@ type
     procedure miClickThroughClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
+    procedure miChangeFontSizeClick(Sender: TObject);
   private
     { Private declarations }
     ini: TIniFile;
@@ -141,7 +143,7 @@ var
 begin
   Text := ini.ReadString('Data' + IntToStr(i), 'text' , '-');
   lbl.Caption := StringReplace(Text, '\n', #13#10, [rfReplaceAll]);
-  lblShadow.Caption := lbl.Caption;
+  lbl.Font.Size := ini.ReadInteger('Data' + IntToStr(i), 'size' , 12);
 
   Left := ini.ReadInteger('Data' + IntToStr(i), 'x', 500);
   Top := ini.ReadInteger('Data' + IntToStr(i), 'y', 500);
@@ -380,6 +382,27 @@ begin
   ini := TIniFile.Create(config);
   try
     ini.WriteString('Data' + IntToStr(number), 'color', color);
+  finally
+    ini.Free;
+  end;
+end;
+
+procedure TFrmSplashText.miChangeFontSizeClick(Sender: TObject);
+var
+  size: String;
+begin
+  size := IntToStr(lbl.Font.Size);
+  size := InputBox(Caption, 'New Font Size:', size);
+  if size = '' then Exit;
+
+  lbl.Font.Size := StrToInt(size);
+  ResizeForm;
+
+  UpdateShadowLabels;
+
+  ini := TIniFile.Create(config);
+  try
+    ini.WriteInteger('Data' + IntToStr(number), 'size', lbl.Font.Size);
   finally
     ini.Free;
   end;

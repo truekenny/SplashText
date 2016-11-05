@@ -33,6 +33,7 @@ object FrmText: TFrmText
     Lines.Strings = (
       'mmo')
     ParentFont = False
+    ScrollBars = ssBoth
     TabOrder = 0
   end
   object btnOk: TButton
