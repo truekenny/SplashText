@@ -70,6 +70,7 @@ object FrmSplashText: TFrmSplashText
     Font.Height = -16
     Font.Name = 'Fixedsys'
     Font.Style = []
+    Font.Quality = fqNonAntialiased
     ParentColor = False
     ParentFont = False
   end
