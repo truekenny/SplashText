@@ -49,11 +49,11 @@ type
 
     procedure miAddClick(Sender: TObject);
     procedure miEditTextClick(Sender: TObject);
+    procedure miChangeFontClick(Sender: TObject);
     procedure miShowAllClick(Sender: TObject);
     procedure miClickThroughClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
-    procedure miChangeFontClick(Sender: TObject);
   private
     { Private declarations }
     ini: TIniFile;
