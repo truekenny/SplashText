@@ -28,6 +28,7 @@ type
     dlgColor: TColorDialog;
     miClickThrough: TMenuItem;
     il: TImageList;
+    lblShadow: TLabel;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -59,6 +60,7 @@ type
     { Public declarations }
     procedure Init(ini: TIniFile; i: Integer);
     function TColorToHex(Color : TColor) : string;
+    function TColorToShadow(Color : TColor) : TColor;
     function HexToTColor(sColor : string) : TColor;
     procedure ResizeForm();
     procedure TrayMessage(var Msg: TMessage); message WM_ICONTRAY;
@@ -71,6 +73,15 @@ var
 implementation
 
 {$R *.dfm}
+
+function TFrmSplashText.TColorToShadow(Color : TColor) : TColor;
+begin
+  Result := RGB(
+      Round(GetRValue(Color) + 256/2) mod 256,
+      Round(GetGValue(Color) + 256/2) mod 256,
+      Round(GetBValue(Color) + 256/2) mod 256
+    );
+end;
 
 function TFrmSplashText.TColorToHex(Color : TColor) : string;
 begin
@@ -96,11 +107,13 @@ var
 begin
   Text := ini.ReadString('Data' + IntToStr(i), 'text' , '-');
   lbl.Caption := StringReplace(Text, '\n', #13#10, [rfReplaceAll]);
+  lblShadow.Caption := lbl.Caption;
 
   Left := ini.ReadInteger('Data' + IntToStr(i), 'x', 500);
   Top := ini.ReadInteger('Data' + IntToStr(i), 'y', 500);
   lbl.Font.Color := HexToTColor(ini.ReadString('Data' + IntToStr(i), 'color' , 'FFFFFF'));
   lblMove.Color := lbl.Font.Color;
+  lblShadow.Font.Color := TColorToShadow(lbl.Font.Color);
 
   Application.ProcessMessages;
 
@@ -226,6 +239,11 @@ end;
 
 procedure TFrmSplashText.FormActivate(Sender: TObject);
 begin
+  lblShadow.Font := lbl.Font;
+  lblShadow.Left := lbl.Left + 1;
+  lblShadow.Top := lbl.Top + 1;
+  lblShadow.Font.Color := TColorToShadow(lbl.Font.Color);
+
   ShowWindow(Application.Handle, SW_HIDE);
 end;
 
@@ -302,6 +320,7 @@ begin
   if not FrmText.Save then Exit;
 
   lbl.Caption := FrmText.mmo.Text;
+  lblShadow.Caption := lbl.Caption;
   Application.ProcessMessages;
 
   ResizeForm;
@@ -323,6 +342,7 @@ begin
 
   lbl.Font.Color := dlgColor.Color;
   lblMove.Color := lbl.Font.Color;
+  lblShadow.Font.Color := TColorToShadow(lbl.Font.Color);
 
   color := TColorToHex(dlgColor.Color);
 

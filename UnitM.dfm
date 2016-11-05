@@ -20,13 +20,22 @@ object FrmSplashText: TFrmSplashText
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object lblShadow: TLabel
+    Left = 8
+    Top = 72
+    Width = 48
+    Height = 13
+    Caption = 'lblShadow'
+    Color = clBtnFace
+    ParentColor = False
+  end
   object lbl: TLabel
     Left = 8
     Top = 24
     Width = 56
     Height = 32
     Caption = 'MASTER'#13#10'PROCESS'
-    Color = clPurple
+    Color = clBtnFace
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWhite
     Font.Height = -16
