@@ -30,11 +30,9 @@ type
     miClickThrough: TMenuItem;
     il: TImageList;
     lblShadow: TLabel;
-    lblShadow2: TLabel;
-    lblShadow3: TLabel;
-    lblShadow4: TLabel;
     miChangeFont: TMenuItem;
     FontDialog: TFontDialog;
+    miShadow: TMenuItem;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -50,6 +48,7 @@ type
     procedure miAddClick(Sender: TObject);
     procedure miEditTextClick(Sender: TObject);
     procedure miChangeFontClick(Sender: TObject);
+    procedure miShadowClick(Sender: TObject);
     procedure miShowAllClick(Sender: TObject);
     procedure miClickThroughClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
@@ -68,7 +67,7 @@ type
     function StrToStyle(Str: String): TFontStyles;
     function FontToString(Font: TFont) : string;
     procedure StringToFont(Font: String);
-    procedure UpdateShadowLabels;
+    procedure UpdateLabels;
     function TColorToShadow(Color : TColor) : TColor;
     function TColorToHex(Color : TColor) : string;
     function HexToTColor(sColor : string) : TColor;
@@ -138,8 +137,10 @@ begin
   List.Free;
 end;
 
-procedure TFrmSplashText.UpdateShadowLabels;
+procedure TFrmSplashText.UpdateLabels;
 begin
+  lblMove.Color := lbl.Font.Color;
+
   lblShadow.Font := lbl.Font;
   lblShadow.Left := lbl.Left + 1;
   lblShadow.Top := lbl.Top + 1;
@@ -147,25 +148,6 @@ begin
   lblShadow.Caption := lbl.Caption;
 
   lblClose.Font.Color := lblShadow.Font.Color;
-(*
-  lblShadow2.Font := lbl.Font;
-  lblShadow2.Left := lbl.Left - 1;
-  lblShadow2.Top := lbl.Top + 1;
-  lblShadow2.Font.Color := TColorToShadow(lbl.Font.Color);
-  lblShadow2.Caption := lbl.Caption;
-
-  lblShadow3.Font := lbl.Font;
-  lblShadow3.Left := lbl.Left + 1;
-  lblShadow3.Top := lbl.Top - 1;
-  lblShadow3.Font.Color := TColorToShadow(lbl.Font.Color);
-  lblShadow3.Caption := lbl.Caption;
-
-  lblShadow4.Font := lbl.Font;
-  lblShadow4.Left := lbl.Left - 1;
-  lblShadow4.Top := lbl.Top - 1;
-  lblShadow4.Font.Color := TColorToShadow(lbl.Font.Color);
-  lblShadow4.Caption := lbl.Caption;
-*)
 end;
 
 function TFrmSplashText.TColorToShadow(Color : TColor) : TColor;
@@ -209,8 +191,10 @@ begin
   Font := ini.ReadString('Data' + IntToStr(i), 'font', DEFAULT_FONT);
   StringToFont(Font);
 
-  lblMove.Color := lbl.Font.Color;
-  UpdateShadowLabels;
+  lblShadow.Visible := ini.ReadBool('Data' + IntToStr(i), 'shadow', True);
+  miShadow.Checked := lblShadow.Visible;
+
+  UpdateLabels;
 
   Application.ProcessMessages;
 
@@ -336,7 +320,7 @@ end;
 
 procedure TFrmSplashText.FormActivate(Sender: TObject);
 begin
-  UpdateShadowLabels;
+  UpdateLabels;
 
   ShowWindow(Application.Handle, SW_HIDE);
 end;
@@ -414,7 +398,7 @@ begin
   if not FrmText.Save then Exit;
 
   lbl.Caption := FrmText.mmo.Text;
-  UpdateShadowLabels;
+  UpdateLabels;
   Application.ProcessMessages;
 
   ResizeForm;
@@ -433,14 +417,27 @@ begin
   FontDialog.Font := lbl.Font;
   if not FontDialog.Execute() then Exit;
   lbl.Font := FontDialog.Font;
-  lblMove.Color := FontDialog.Font.Color;
 
   ResizeForm;
-  UpdateShadowLabels;
+  UpdateLabels;
 
   ini := TIniFile.Create(config);
   try
     ini.WriteString('Data' + IntToStr(number), 'font', FontToString(FontDialog.Font));
+  finally
+    ini.Free;
+  end;
+end;
+
+procedure TFrmSplashText.miShadowClick(Sender: TObject);
+begin
+  miShadow.Checked := not miShadow.Checked;
+
+  lblShadow.Visible := miShadow.Checked;
+
+  ini := TIniFile.Create(config);
+  try
+    ini.WriteBool('Data' + IntToStr(number), 'shadow', miShadow.Checked);
   finally
     ini.Free;
   end;

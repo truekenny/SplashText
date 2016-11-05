@@ -58,30 +58,6 @@ object FrmSplashText: TFrmSplashText
     PopupMenu = pm
     OnClick = lblCloseClick
   end
-  object lblShadow2: TLabel
-    Left = 8
-    Top = 91
-    Width = 54
-    Height = 13
-    Caption = 'lblShadow2'
-    Visible = False
-  end
-  object lblShadow3: TLabel
-    Left = 8
-    Top = 110
-    Width = 54
-    Height = 13
-    Caption = 'lblShadow3'
-    Visible = False
-  end
-  object lblShadow4: TLabel
-    Left = 8
-    Top = 129
-    Width = 54
-    Height = 13
-    Caption = 'lblShadow4'
-    Visible = False
-  end
   object lbl: TLabel
     Left = 8
     Top = 24
@@ -123,6 +99,10 @@ object FrmSplashText: TFrmSplashText
       Caption = 'Change Font...'
       ImageIndex = 6
       OnClick = miChangeFontClick
+    end
+    object miShadow: TMenuItem
+      Caption = 'Shadow'
+      OnClick = miShadowClick
     end
     object miSeparator2: TMenuItem
       Caption = '-'
