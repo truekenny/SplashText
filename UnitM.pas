@@ -61,14 +61,14 @@ type
     TrayIconData: TNotifyIconData;
   public
     { Public declarations }
-    procedure Init(ini: TIniFile; i: Integer);
-    function TColorToHex(Color : TColor) : string;
+    procedure UpdateShadowLabels;
     function TColorToShadow(Color : TColor) : TColor;
+    function TColorToHex(Color : TColor) : string;
     function HexToTColor(sColor : string) : TColor;
+    procedure Init(ini: TIniFile; i: Integer);
     procedure ResizeForm();
     procedure TrayMessage(var Msg: TMessage); message WM_ICONTRAY;
     procedure TransparentStyle(var Msg: TMessage); message WM_APP;
-    procedure UpdateShadowLabels;
   end;
 
 var
@@ -85,6 +85,8 @@ begin
   lblShadow.Top := lbl.Top + 1;
   lblShadow.Font.Color := TColorToShadow(lbl.Font.Color);
   lblShadow.Caption := lbl.Caption;
+
+  lblClose.Font.Color := lblShadow.Font.Color;
 (*
   lblShadow2.Font := lbl.Font;
   lblShadow2.Left := lbl.Left - 1;
