@@ -29,21 +29,6 @@ object FrmSplashText: TFrmSplashText
     Color = clBtnFace
     ParentColor = False
   end
-  object lbl: TLabel
-    Left = 8
-    Top = 24
-    Width = 56
-    Height = 32
-    Caption = 'MASTER'#13#10'PROCESS'
-    Color = clBtnFace
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clWhite
-    Font.Height = -16
-    Font.Name = 'Fixedsys'
-    Font.Style = []
-    ParentColor = False
-    ParentFont = False
-  end
   object lblMove: TLabel
     Left = 8
     Top = 8
@@ -72,6 +57,45 @@ object FrmSplashText: TFrmSplashText
     ParentFont = False
     PopupMenu = pm
     OnClick = lblCloseClick
+  end
+  object lblShadow2: TLabel
+    Left = 8
+    Top = 91
+    Width = 54
+    Height = 13
+    Caption = 'lblShadow2'
+    Visible = False
+  end
+  object lblShadow3: TLabel
+    Left = 8
+    Top = 110
+    Width = 54
+    Height = 13
+    Caption = 'lblShadow3'
+    Visible = False
+  end
+  object lblShadow4: TLabel
+    Left = 8
+    Top = 129
+    Width = 54
+    Height = 13
+    Caption = 'lblShadow4'
+    Visible = False
+  end
+  object lbl: TLabel
+    Left = 8
+    Top = 24
+    Width = 56
+    Height = 32
+    Caption = 'MASTER'#13#10'PROCESS'
+    Color = clBtnFace
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWhite
+    Font.Height = -16
+    Font.Name = 'Fixedsys'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
   end
   object tmr: TTimer
     OnTimer = tmrTimer

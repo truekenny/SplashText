@@ -29,6 +29,9 @@ type
     miClickThrough: TMenuItem;
     il: TImageList;
     lblShadow: TLabel;
+    lblShadow2: TLabel;
+    lblShadow3: TLabel;
+    lblShadow4: TLabel;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -65,6 +68,7 @@ type
     procedure ResizeForm();
     procedure TrayMessage(var Msg: TMessage); message WM_ICONTRAY;
     procedure TransparentStyle(var Msg: TMessage); message WM_APP;
+    procedure UpdateShadowLabels;
   end;
 
 var
@@ -73,6 +77,34 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TFrmSplashText.UpdateShadowLabels;
+begin
+  lblShadow.Font := lbl.Font;
+  lblShadow.Left := lbl.Left + 1;
+  lblShadow.Top := lbl.Top + 1;
+  lblShadow.Font.Color := TColorToShadow(lbl.Font.Color);
+  lblShadow.Caption := lbl.Caption;
+(*
+  lblShadow2.Font := lbl.Font;
+  lblShadow2.Left := lbl.Left - 1;
+  lblShadow2.Top := lbl.Top + 1;
+  lblShadow2.Font.Color := TColorToShadow(lbl.Font.Color);
+  lblShadow2.Caption := lbl.Caption;
+
+  lblShadow3.Font := lbl.Font;
+  lblShadow3.Left := lbl.Left + 1;
+  lblShadow3.Top := lbl.Top - 1;
+  lblShadow3.Font.Color := TColorToShadow(lbl.Font.Color);
+  lblShadow3.Caption := lbl.Caption;
+
+  lblShadow4.Font := lbl.Font;
+  lblShadow4.Left := lbl.Left - 1;
+  lblShadow4.Top := lbl.Top - 1;
+  lblShadow4.Font.Color := TColorToShadow(lbl.Font.Color);
+  lblShadow4.Caption := lbl.Caption;
+*)
+end;
 
 function TFrmSplashText.TColorToShadow(Color : TColor) : TColor;
 begin
@@ -113,7 +145,7 @@ begin
   Top := ini.ReadInteger('Data' + IntToStr(i), 'y', 500);
   lbl.Font.Color := HexToTColor(ini.ReadString('Data' + IntToStr(i), 'color' , 'FFFFFF'));
   lblMove.Color := lbl.Font.Color;
-  lblShadow.Font.Color := TColorToShadow(lbl.Font.Color);
+  UpdateShadowLabels;
 
   Application.ProcessMessages;
 
@@ -239,10 +271,7 @@ end;
 
 procedure TFrmSplashText.FormActivate(Sender: TObject);
 begin
-  lblShadow.Font := lbl.Font;
-  lblShadow.Left := lbl.Left + 1;
-  lblShadow.Top := lbl.Top + 1;
-  lblShadow.Font.Color := TColorToShadow(lbl.Font.Color);
+  UpdateShadowLabels;
 
   ShowWindow(Application.Handle, SW_HIDE);
 end;
@@ -320,7 +349,7 @@ begin
   if not FrmText.Save then Exit;
 
   lbl.Caption := FrmText.mmo.Text;
-  lblShadow.Caption := lbl.Caption;
+  UpdateShadowLabels;
   Application.ProcessMessages;
 
   ResizeForm;
@@ -342,7 +371,7 @@ begin
 
   lbl.Font.Color := dlgColor.Color;
   lblMove.Color := lbl.Font.Color;
-  lblShadow.Font.Color := TColorToShadow(lbl.Font.Color);
+  UpdateShadowLabels;
 
   color := TColorToHex(dlgColor.Color);
 
