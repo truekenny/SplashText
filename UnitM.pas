@@ -313,6 +313,7 @@ begin
     Shell_NotifyIcon(NIM_ADD, @TrayIconData);
 
     miEditText.Visible := False;
+    miShadow.Visible := False;
     miChangeFont.Visible := False;
     miSeparator1.Visible := False;
   end;
