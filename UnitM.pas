@@ -9,6 +9,8 @@ uses
 
 const
   WM_ICONTRAY = WM_USER + 1;
+  DEFAULT_FONT = 'Fixedsys,204,FF0000,12,SSSS';
+
 type
   TFrmSplashText = class(TForm)
     lbl: TLabel;
@@ -21,7 +23,6 @@ type
     miAdd: TMenuItem;
     miShowAll: TMenuItem;
     miEditText: TMenuItem;
-    miChangeColor: TMenuItem;
     miSeparator1: TMenuItem;
     miSeparator2: TMenuItem;
     miSeparator3: TMenuItem;
@@ -32,7 +33,8 @@ type
     lblShadow2: TLabel;
     lblShadow3: TLabel;
     lblShadow4: TLabel;
-    miChangeFontSize: TMenuItem;
+    miChangeFont: TMenuItem;
+    FontDialog: TFontDialog;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -47,12 +49,11 @@ type
 
     procedure miAddClick(Sender: TObject);
     procedure miEditTextClick(Sender: TObject);
-    procedure miChangeColorClick(Sender: TObject);
     procedure miShowAllClick(Sender: TObject);
     procedure miClickThroughClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
-    procedure miChangeFontSizeClick(Sender: TObject);
+    procedure miChangeFontClick(Sender: TObject);
   private
     { Private declarations }
     ini: TIniFile;
@@ -63,6 +64,10 @@ type
     TrayIconData: TNotifyIconData;
   public
     { Public declarations }
+    function StyleToStr(Style: TFontStyles): String;
+    function StrToStyle(Str: String): TFontStyles;
+    function FontToString(Font: TFont) : string;
+    procedure StringToFont(Font: String);
     procedure UpdateShadowLabels;
     function TColorToShadow(Color : TColor) : TColor;
     function TColorToHex(Color : TColor) : string;
@@ -79,6 +84,59 @@ var
 implementation
 
 {$R *.dfm}
+
+function TFrmSplashText.StyleToStr(Style: TFontStyles): String;
+begin
+  SetLength(Result, 4);
+  {T = true, S = false 83 is ordinal value of S, if true then S + 1 (84) = T}
+  Result[1] := Char(Integer(fsBold In Style) + 83);
+  Result[2] := Char(Integer(fsItalic In Style) + 83);
+  Result[3] := Char(Integer(fsUnderline In Style) + 83);
+  Result[4] := Char(Integer(fsStrikeOut In Style) + 83);
+  {replace all S to F's if you like}
+  Result := StringReplace(Result, 'S', 'F', [rfReplaceAll]);
+end;
+
+function TFrmSplashText.StrToStyle(Str: String): TFontStyles;
+begin
+  Result := [];
+  {T = true, S = false}
+  if Str[1] = 'T' then
+    Include(Result, fsBold);
+  if Str[2] = 'T' then
+    Include(Result, fsItalic);
+  if Str[3] = 'T' then
+    Include(Result, fsUnderLine);
+  if Str[4] = 'T' then
+    Include(Result, fsStrikeOut);
+end;
+
+function TFrmSplashText.FontToString(Font: TFont) : string;
+begin
+  result := Font.Name + ','
+    + IntToStr(Font.Charset) + ','
+    + TColorToHex(Font.Color) + ','
+    + IntToStr(Font.Size) + ','
+    + StyleToStr(Font.Style);
+end;
+
+procedure TFrmSplashText.StringToFont(Font: String);
+var
+  List: TStrings;
+  Name : String;
+  Charset, Color, Size, Style: Integer;
+begin
+  List := TStringList.Create;
+
+  ExtractStrings([','], [], PChar(Font), List);
+  lbl.Font.Name := List.Strings[0];
+  lbl.Font.Charset := StrToInt(List.Strings[1]);
+  lbl.Font.Color := HexToTColor(List.Strings[2]);
+  lbl.Font.Size := StrToInt(List.Strings[3]);
+  lbl.Font.Style := StrToStyle(List.Strings[4]);
+
+  List.Free;
+end;
 
 procedure TFrmSplashText.UpdateShadowLabels;
 begin
@@ -140,14 +198,17 @@ function TFrmSplashText.HexToTColor(sColor : string) : TColor;
 procedure TFrmSplashText.Init(ini: TIniFile; i: Integer);
 var
   Text: String;
+  Font: String;
 begin
   Text := ini.ReadString('Data' + IntToStr(i), 'text' , '-');
   lbl.Caption := StringReplace(Text, '\n', #13#10, [rfReplaceAll]);
-  lbl.Font.Size := ini.ReadInteger('Data' + IntToStr(i), 'size' , 12);
 
   Left := ini.ReadInteger('Data' + IntToStr(i), 'x', 500);
   Top := ini.ReadInteger('Data' + IntToStr(i), 'y', 500);
-  lbl.Font.Color := HexToTColor(ini.ReadString('Data' + IntToStr(i), 'color' , 'FFFFFF'));
+
+  Font := ini.ReadString('Data' + IntToStr(i), 'font', DEFAULT_FONT);
+  StringToFont(Font);
+
   lblMove.Color := lbl.Font.Color;
   UpdateShadowLabels;
 
@@ -268,7 +329,7 @@ begin
     Shell_NotifyIcon(NIM_ADD, @TrayIconData);
 
     miEditText.Visible := False;
-    miChangeColor.Visible := False;
+    miChangeFont.Visible := False;
     miSeparator1.Visible := False;
   end;
 end;
@@ -367,42 +428,19 @@ begin
   end;
 end;
 
-procedure TFrmSplashText.miChangeColorClick(Sender: TObject);
-var
-  color: string;
+procedure TFrmSplashText.miChangeFontClick(Sender: TObject);
 begin
-  if not dlgColor.Execute then Exit;
+  FontDialog.Font := lbl.Font;
+  if not FontDialog.Execute() then Exit;
+  lbl.Font := FontDialog.Font;
+  lblMove.Color := FontDialog.Font.Color;
 
-  lbl.Font.Color := dlgColor.Color;
-  lblMove.Color := lbl.Font.Color;
-  UpdateShadowLabels;
-
-  color := TColorToHex(dlgColor.Color);
-
-  ini := TIniFile.Create(config);
-  try
-    ini.WriteString('Data' + IntToStr(number), 'color', color);
-  finally
-    ini.Free;
-  end;
-end;
-
-procedure TFrmSplashText.miChangeFontSizeClick(Sender: TObject);
-var
-  size: String;
-begin
-  size := IntToStr(lbl.Font.Size);
-  size := InputBox(Caption, 'New Font Size:', size);
-  if size = '' then Exit;
-
-  lbl.Font.Size := StrToInt(size);
   ResizeForm;
-
   UpdateShadowLabels;
 
   ini := TIniFile.Create(config);
   try
-    ini.WriteInteger('Data' + IntToStr(number), 'size', lbl.Font.Size);
+    ini.WriteString('Data' + IntToStr(number), 'font', FontToString(FontDialog.Font));
   finally
     ini.Free;
   end;

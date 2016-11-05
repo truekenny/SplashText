@@ -119,15 +119,10 @@ object FrmSplashText: TFrmSplashText
       ImageIndex = 4
       OnClick = miEditTextClick
     end
-    object miChangeColor: TMenuItem
-      Caption = 'Change Color...'
-      ImageIndex = 2
-      OnClick = miChangeColorClick
-    end
-    object miChangeFontSize: TMenuItem
-      Caption = 'Change Font Size...'
+    object miChangeFont: TMenuItem
+      Caption = 'Change Font...'
       ImageIndex = 6
-      OnClick = miChangeFontSizeClick
+      OnClick = miChangeFontClick
     end
     object miSeparator2: TMenuItem
       Caption = '-'
@@ -435,5 +430,14 @@ object FrmSplashText: TFrmSplashText
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
+  end
+  object FontDialog: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Left = 200
+    Top = 96
   end
 end
