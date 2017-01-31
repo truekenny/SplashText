@@ -368,15 +368,15 @@ end;
 
 procedure TFrmSplashText.tmrOpacityTimer(Sender: TObject);
 begin
-  if (Mouse.CursorPos.X > Left)
-  and (Mouse.CursorPos.X < Left + Width)
-  and (Mouse.CursorPos.Y > Top)
-  and (Mouse.CursorPos.Y < Top + Height) then begin
+  if (Mouse.CursorPos.X > Left - Round(Width * 0.5))
+  and (Mouse.CursorPos.X < Left + Round(Width * 1.5))
+  and (Mouse.CursorPos.Y > Top - Round(Height * 0.5))
+  and (Mouse.CursorPos.Y < Top + Round(Height * 1.5)) then begin
     if miClickThrough.Checked then
-      AlphaBlendValue := Max(0, AlphaBlendValue - 10);
+      AlphaBlendValue := Max(0, AlphaBlendValue - 80);
   end else begin
     if miClickThrough.Checked then
-      AlphaBlendValue := Min(255, AlphaBlendValue + 10)
+      AlphaBlendValue := Min(255, AlphaBlendValue + 80)
     else
       AlphaBlendValue := 255;
   end;
