@@ -33,6 +33,7 @@ type
     miChangeFont: TMenuItem;
     FontDialog: TFontDialog;
     miShadow: TMenuItem;
+    tmrOpacity: TTimer;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -53,6 +54,7 @@ type
     procedure miClickThroughClick(Sender: TObject);
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
+    procedure tmrOpacityTimer(Sender: TObject);
   private
     { Private declarations }
     ini: TIniFile;
@@ -361,6 +363,22 @@ begin
   if Button = mbLeft then begin
     ReleaseCapture;
     SendMessage(Handle, WM_SYSCOMMAND, 61458, 0) ;
+  end;
+end;
+
+procedure TFrmSplashText.tmrOpacityTimer(Sender: TObject);
+begin
+  if (Mouse.CursorPos.X > Left)
+  and (Mouse.CursorPos.X < Left + Width)
+  and (Mouse.CursorPos.Y > Top)
+  and (Mouse.CursorPos.Y < Top + Height) then begin
+    if miClickThrough.Checked then
+      AlphaBlendValue := Max(0, AlphaBlendValue - 10);
+  end else begin
+    if miClickThrough.Checked then
+      AlphaBlendValue := Min(255, AlphaBlendValue + 10)
+    else
+      AlphaBlendValue := 255;
   end;
 end;
 

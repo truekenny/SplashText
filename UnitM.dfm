@@ -1,6 +1,7 @@
 object FrmSplashText: TFrmSplashText
   Left = 1007
   Top = 359
+  AlphaBlend = True
   BorderStyle = bsNone
   Caption = 'SplashText'
   ClientHeight = 280
@@ -141,7 +142,7 @@ object FrmSplashText: TFrmSplashText
     Left = 152
     Top = 96
     Bitmap = {
-      494C010107000C00300010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010107000C00340010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       000000000000000000000000000000000000000000000000001D000000340000
       0036000000360000003600000036000000360000003600000036000000360000
@@ -420,5 +421,11 @@ object FrmSplashText: TFrmSplashText
     Font.Style = []
     Left = 200
     Top = 96
+  end
+  object tmrOpacity: TTimer
+    Interval = 50
+    OnTimer = tmrOpacityTimer
+    Left = 152
+    Top = 152
   end
 end
