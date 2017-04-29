@@ -34,6 +34,7 @@ type
     FontDialog: TFontDialog;
     miShadow: TMenuItem;
     tmrOpacity: TTimer;
+    tmrUpdate: TTimer;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -55,12 +56,15 @@ type
     procedure miOpenConfigClick(Sender: TObject);
     procedure miQuitClick(Sender: TObject);
     procedure tmrOpacityTimer(Sender: TObject);
+    procedure tmrUpdateTimer(Sender: TObject);
   private
     { Private declarations }
     ini: TIniFile;
     number: Integer;
     config: String;
     mustHalt: Boolean;
+
+    textTemplate: String;
 
     TrayIconData: TNotifyIconData;
   public
@@ -124,8 +128,6 @@ end;
 procedure TFrmSplashText.StringToFont(Font: String);
 var
   List: TStrings;
-  Name : String;
-  Charset, Color, Size, Style: Integer;
 begin
   List := TStringList.Create;
 
@@ -181,11 +183,11 @@ function TFrmSplashText.HexToTColor(sColor : string) : TColor;
 
 procedure TFrmSplashText.Init(ini: TIniFile; i: Integer);
 var
-  Text: String;
   Font: String;
 begin
-  Text := ini.ReadString('Data' + IntToStr(i), 'text' , '-');
-  lbl.Caption := StringReplace(Text, '\n', #13#10, [rfReplaceAll]);
+  textTemplate := ini.ReadString('Data' + IntToStr(i), 'text' , '-');
+  textTemplate := StringReplace(textTemplate, '\n', #13#10, [rfReplaceAll]);
+  lbl.Caption := textTemplate;
 
   Left := ini.ReadInteger('Data' + IntToStr(i), 'x', 500);
   Top := ini.ReadInteger('Data' + IntToStr(i), 'y', 500);
@@ -197,10 +199,13 @@ begin
   miShadow.Checked := lblShadow.Visible;
 
   UpdateLabels;
-
   Application.ProcessMessages;
-
   ResizeForm;
+
+  if Pos('__', textTemplate) <> 0 then begin
+    tmrUpdate.Enabled := true;
+    tmrUpdateTimer(Self);
+  end;
 
   if ini.ReadBool('Data' + IntToStr(i), 'enable' , True) then begin
     Show();
@@ -387,6 +392,24 @@ begin
   if mustHalt then Close();
 end;
 
+procedure TFrmSplashText.tmrUpdateTimer(Sender: TObject);
+var
+  myHour, myMin, mySec, myMilli : Word;
+  tm: String;
+begin
+  DecodeTime(Time, myHour, myMin, mySec, myMilli);
+
+  tm:= IntToStr(myHour) + ':';
+  if myMin < 10 then tm := tm + '0';
+  tm := tm + IntToStr(myMin);
+
+  lbl.Caption := StringReplace(textTemplate, '__TIME__',  tm, [rfReplaceAll]);
+
+  UpdateLabels;
+  Application.ProcessMessages;
+  ResizeForm;
+end;
+
 procedure TFrmSplashText.miAddClick(Sender: TObject);
 var
   text: String;
@@ -413,13 +436,21 @@ procedure TFrmSplashText.miEditTextClick(Sender: TObject);
 var
   text: string;
 begin
-  FrmText.ShowModal(lbl.Caption);
+  FrmText.ShowModal(textTemplate);
   if not FrmText.Save then Exit;
 
-  lbl.Caption := FrmText.mmo.Text;
+  textTemplate := FrmText.mmo.Text;
+  lbl.Caption := textTemplate;
+
+  if Pos('__', textTemplate) <> 0 then begin
+    tmrUpdate.Enabled := true;
+    tmrUpdateTimer(Self);
+  end else begin
+    tmrUpdate.Enabled := false;
+  end;
+
   UpdateLabels;
   Application.ProcessMessages;
-
   ResizeForm;
 
   ini := TIniFile.Create(config);
