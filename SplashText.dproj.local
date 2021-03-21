@@ -1,2 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject/>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2021.03.21 21:15:27.779,=C:\Users\Kenny\Documents\SplashText\dpipes.pas</Transaction>
+    <Transaction>2021.03.21 21:15:27.815,=C:\Users\Kenny\Documents\SplashText\dprocess.pas</Transaction>
+    <Transaction>2021.03.21 21:18:17.236,=C:\Users\Kenny\Documents\SplashText\pipes_win.inc</Transaction>
+    <Transaction>2021.03.21 21:18:17.264,=C:\Users\Kenny\Documents\SplashText\process_win.inc</Transaction>
+    <Transaction>2021.03.21 21:40:04.999,C:\Users\Kenny\Documents\SplashText\dpipes.pas=</Transaction>
+    <Transaction>2021.03.21 21:40:05.028,C:\Users\Kenny\Documents\SplashText\dprocess.pas=</Transaction>
+    <Transaction>2021.03.21 21:40:05.048,C:\Users\Kenny\Documents\SplashText\pipes_win.inc=</Transaction>
+    <Transaction>2021.03.21 21:40:05.060,C:\Users\Kenny\Documents\SplashText\process_win.inc=</Transaction>
+  </Transactions>
+</BorlandProject>

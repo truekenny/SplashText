@@ -35,6 +35,7 @@ type
     miShadow: TMenuItem;
     tmrOpacity: TTimer;
     tmrUpdate: TTimer;
+    TimerAlwaysOnTop: TTimer;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -57,6 +58,7 @@ type
     procedure miQuitClick(Sender: TObject);
     procedure tmrOpacityTimer(Sender: TObject);
     procedure tmrUpdateTimer(Sender: TObject);
+    procedure TimerAlwaysOnTopTimer(Sender: TObject);
   private
     { Private declarations }
     ini: TIniFile;
@@ -69,6 +71,8 @@ type
     TrayIconData: TNotifyIconData;
   public
     { Public declarations }
+    function vramUsage(): String;
+
     function StyleToStr(Style: TFontStyles): String;
     function StrToStyle(Str: String): TFontStyles;
     function FontToString(Font: TFont) : string;
@@ -161,6 +165,15 @@ begin
       Round(GetGValue(Color) + 256/2) mod 256,
       Round(GetBValue(Color) + 256/2) mod 256
     );
+end;
+
+procedure TFrmSplashText.TimerAlwaysOnTopTimer(Sender: TObject);
+begin
+  if (not Visible) then Exit;
+
+  FormStyle := fsNormal;
+  Application.ProcessMessages;
+  FormStyle := fsStayOnTop;
 end;
 
 function TFrmSplashText.TColorToHex(Color : TColor) : string;
@@ -269,11 +282,23 @@ begin
   miClickThrough.Checked := transparent;
 end;
 
+function TFrmSplashText.vramUsage(): String;
+var
+  output: ansistring;
+begin
+  // RunCommand('C:\Windows\System32\nvidia-smi.exe', ['-q', '-d', 'MEMORY'], output, [poNoConsole]);
+  // RunCommand('nvidia-smi', [], output, [poNoConsole]);
+  // RunCommand('cmd', ['/c', 'dir'], output, [poNoConsole]);
+
+end;
+
 procedure TFrmSplashText.FormCreate(Sender: TObject);
 var
   i, count: Integer;
   msg: TMessage;
 begin
+  vramUsage;
+
   number := -1;
   mustHalt := False;
 
@@ -396,14 +421,26 @@ procedure TFrmSplashText.tmrUpdateTimer(Sender: TObject);
 var
   myHour, myMin, mySec, myMilli : Word;
   tm: String;
+
+  vram: String;
 begin
-  DecodeTime(Time, myHour, myMin, mySec, myMilli);
+  if (Pos('__TIME__', textTemplate) <> 0) then begin
+    DecodeTime(Time, myHour, myMin, mySec, myMilli);
 
-  tm:= IntToStr(myHour) + ':';
-  if myMin < 10 then tm := tm + '0';
-  tm := tm + IntToStr(myMin);
+    tm:= IntToStr(myHour) + ':';
+    if myMin < 10 then tm := tm + '0';
+    tm := tm + IntToStr(myMin);
 
-  lbl.Caption := StringReplace(textTemplate, '__TIME__',  tm, [rfReplaceAll]);
+    lbl.Caption := StringReplace(textTemplate, '__TIME__',  tm, [rfReplaceAll]);
+  end;
+
+  if (Pos('__VRAM__', textTemplate) <> 0) then begin
+    vram := '123';
+
+    lbl.Caption := StringReplace(textTemplate, '__VRAM__',  vram, [rfReplaceAll]);
+
+    tmrUpdate.Interval := 60000; // 1 minute
+  end;
 
   UpdateLabels;
   Application.ProcessMessages;
