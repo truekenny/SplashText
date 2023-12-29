@@ -437,7 +437,12 @@ object FrmSplashText: TFrmSplashText
   object TimerAlwaysOnTop: TTimer
     Interval = 10000
     OnTimer = TimerAlwaysOnTopTimer
-    Left = 208
+    Left = 200
     Top = 208
+  end
+  object TrayIcon: TTrayIcon
+    PopupMenu = pm
+    Left = 200
+    Top = 152
   end
 end

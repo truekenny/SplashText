@@ -36,6 +36,7 @@ type
     tmrOpacity: TTimer;
     tmrUpdate: TTimer;
     TimerAlwaysOnTop: TTimer;
+    TrayIcon: TTrayIcon;
 
     procedure CreateParams(var Params: TCreateParams); override;
 
@@ -68,7 +69,7 @@ type
 
     textTemplate: String;
 
-    TrayIconData: TNotifyIconData;
+    // TrayIconData: TNotifyIconData;
   public
     { Public declarations }
     function vramUsage(): String;
@@ -83,7 +84,6 @@ type
     function HexToTColor(sColor : string) : TColor;
     procedure Init(ini: TIniFile; i: Integer);
     procedure ResizeForm();
-    procedure TrayMessage(var Msg: TMessage); message WM_ICONTRAY;
     procedure TransparentStyle(var Msg: TMessage); message WM_APP;
   end;
 
@@ -241,21 +241,6 @@ begin
   Params.WndParent := Application.Handle;
 end;
 
-procedure TFrmSplashText.TrayMessage(var Msg: TMessage);
-begin
-  case Msg.lParam of
-    WM_LBUTTONDOWN:
-    begin
-      //
-    end;
-    WM_RBUTTONDOWN:
-    begin
-      SetForegroundWindow(Handle);
-      pm.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
-    end;
-  end;
-end;
-
 procedure TFrmSplashText.TransparentStyle(var Msg: TMessage);
 var
   transparent: Boolean;
@@ -283,8 +268,8 @@ begin
 end;
 
 function TFrmSplashText.vramUsage(): String;
-var
-  output: ansistring;
+// var
+//  output: ansistring;
 begin
   // RunCommand('C:\Windows\System32\nvidia-smi.exe', ['-q', '-d', 'MEMORY'], output, [poNoConsole]);
   // RunCommand('nvidia-smi', [], output, [poNoConsole]);
@@ -331,18 +316,7 @@ begin
   end;
 
   if number = -1 then begin
-    with TrayIconData do
-      begin
-        cbSize :=  TNotifyIconData.SizeOf; // SizeOf(TrayIconData);
-        Wnd := Handle;
-        uID := 0;
-        uFlags := NIF_MESSAGE + NIF_ICON + NIF_TIP;
-        uCallbackMessage := WM_ICONTRAY;
-        hIcon := Application.Icon.Handle;
-        StrPCopy(szTip, Application.Title);
-      end;
-
-    Shell_NotifyIcon(NIM_ADD, @TrayIconData);
+    TrayIcon.Visible := True;
 
     miEditText.Visible := False;
     miShadow.Visible := False;
@@ -361,7 +335,6 @@ end;
 procedure TFrmSplashText.FormDestroy(Sender: TObject);
 begin
   if number = -1 then begin
-    Shell_NotifyIcon(NIM_DELETE, @TrayIconData);
     Exit;
   end;
 
